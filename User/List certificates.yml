@@ -1,0 +1,87 @@
+info:
+  name: List certificates
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{baseUrl}}/users/me/certificates?page=1&limit=20"
+  params:
+    - name: page
+      value: "1"
+      type: query
+      description: Página atual
+    - name: limit
+      value: "20"
+      type: query
+      description: Itens por página (máx. 50)
+  auth:
+    type: bearer
+    token: "{{apiKey}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # GET /users/me/certificates — Cards de certificados
+
+  Lista os certificados emitidos do usuário autenticado,
+
+  ## Autenticação
+  - Bearer token (JWT) obrigatório.
+  - O `userId` é extraído exclusivamente do token.
+
+  ## Query params
+  | Param | Tipo | Default | Descrição |
+  |-------|------|---------|-----------|
+  | page  | int  | 1       | Página atual |
+  | limit | int  | 20      | Itens por página (máx. 50) |
+
+  ## Resposta — 200 OK
+  ```json
+  {
+    "data": [
+      {
+        "id": "uuid",
+        "activityTitle": "Semana da Computação — Oficina de Git",
+        "workloadHours": 8,
+        "activityDate": "2026-06-10T14:00:00.000Z",
+        "issuedAt": "2026-06-15T09:00:00.000Z",
+        "validationCode": "HELPA-2026-A1B2C3"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "limit": 20,
+    "totalHours": 8
+  }
+  ```
+
+  ## Mapeamento de campos (DTO -> Prisma)
+  | Campo            | Origem |
+  |------------------|--------|
+  | `activityTitle`  | `Certificate -> Enrollment -> Activity.title` |
+  | `workloadHours`  | `Activity -> ActivityDetails.workloadHours` |
+  | `activityDate`   | `Activity.startDate` |
+  | `issuedAt`       | `Certificate.issuedAt` (ISO 8601 com horário) |
+  | `validationCode` | `Certificate.validationCode` |
+
+  ## Regras de negócio
+  - Ordenação padrão: `issuedAt` decrescente.
+  - Certificados de ações removidas (soft delete) permanecem listados
+  - `totalHours` é a soma de `workloadHours` de todos os certificados do
+    usuário.
+
+  ## Erros
+  | Status | Quando |
+  |--------|--------|
+  | 400    | `page`/`limit` inválidos |
+  | 401    | Token ausente, inválido ou expirado |
+
+  Corpo de erro padronizado:
+  ```json
+  { "statusCode": 401, "error": "UNAUTHORIZED", "message": "Token ausente, inválido ou expirado." }
+  ```
