@@ -13,7 +13,7 @@ http:
       value: "{{apiKey}}"
   params:
     - name: id
-      value: ""
+      value: 22ac40bd-e160-4c6e-8505-b63913d2482f
       type: path
       description: Activity UUID
   body:
