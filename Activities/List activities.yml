@@ -121,11 +121,6 @@ http:
       disabled: true
   auth: inherit
 
-runtime:
-  variables:
-    - name: baseUrl
-      value: http://localhost:3333
-
 settings:
   encodeUrl: true
   timeout: 0

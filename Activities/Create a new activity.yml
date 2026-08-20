@@ -39,11 +39,6 @@ http:
     value: "{{apiKey}}"
     placement: header
 
-runtime:
-  variables:
-    - name: baseUrl
-      value: localhost:3333
-
 settings:
   encodeUrl: true
   timeout: 0
