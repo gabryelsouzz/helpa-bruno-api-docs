@@ -1,0 +1,186 @@
+info:
+  name: Cancel Enrollment
+  type: http
+  seq: 9
+  tags:
+    - Enroll
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/enroll/:activityId"
+  params:
+    - name: activityId
+      value: f26559ac-d672-4252-a9a4-d6fe6583d8ec
+      type: path
+      description: Activity UUID
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+examples:
+  - name: 204 - Sucessful
+    description: Enrollment soft-deleted successfully. No content returned. The slot is immediately reflected in availableSlots.
+    request:
+      url: "{{baseUrl}}/enroll/:activityId"
+      method: DELETE
+      headers:
+        - name: token
+          value: "{{apiKey}}"
+      params:
+        - name: activityId
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 204
+      statusText: No Content
+      body:
+        type: text
+        data: ""
+  - name: 401 - Unauthenticated
+    description: Unauthenticated. Token header is missing, invalid or expired.
+    request:
+      url: "{{baseUrl}}/enroll/:activityId"
+      method: DELETE
+      headers:
+        - name: token
+          value: ""
+      params:
+        - name: activityId
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 401,
+            "message": "Unauthenticated."
+          }
+  - name: 401 - User not found
+    description: Token is valid, but the user it identifies no longer exists or is inactive.
+    request:
+      url: "{{baseUrl}}/enroll/:activityId"
+      method: DELETE
+      headers:
+        - name: token
+          value: "{{apiKey}}"
+      params:
+        - name: activityId
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 401,
+            "message": "User account not found or inactive."
+          }
+  - name: 404 - Enrollment not found
+    description: No active enrollment for the authenticated user in this activity. Also returned when the enrollment was already canceled or belongs to another user — without revealing other users' enrollments.
+    request:
+      url: "{{baseUrl}}/enroll/:activityId"
+      method: DELETE
+      headers:
+        - name: token
+          value: "{{apiKey}}"
+      params:
+        - name: activityId
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 404,
+            "message": "Enrollment not found."
+          }
+  - name: 404 - Activity not found
+    description: Activity not found or soft-deleted.
+    request:
+      url: "{{baseUrl}}/enroll/:activityId"
+      method: DELETE
+      headers:
+        - name: token
+          value: "{{apiKey}}"
+      params:
+        - name: activityId
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 404,
+            "message": "Activity not found."
+          }
+  - name: 500 - Internal error
+    description: Internal server error.
+    request:
+      url: "{{baseUrl}}/enroll/:activityId"
+      method: DELETE
+      headers:
+        - name: token
+          value: "{{apiKey}}"
+      params:
+        - name: activityId
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 500
+      statusText: Internal Server Error
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 500,
+            "message": "Internal server error."
+          }
+
+docs: |-
+  Cancels the authenticated user's enrollment in the activity.
+
+  - Enrollment is a top-level entity with a dedicated route: /enroll. The activity is identified by the activityId path param.
+  - No request body: the user is resolved exclusively from the JWT token (never from params, query or body).
+  - The token must be valid AND the user must still exist and be active in the database (light hybrid authentication).
+  - Cancellation is a soft delete: the enrollment record is kept with a deletion mark, preserving participation history.
+  - The lookup is always scoped to (activityId, token user): canceling another user's enrollment is indistinguishable from a nonexistent enrollment (404).
+  - Canceling an already canceled enrollment returns 404 (not idempotent in the response, but does not corrupt state).
+  - availableSlots counts only active enrollments, so the slot is released automatically.
+  - Re-enrollment after canceling is possible via POST /enroll/:activityId.
