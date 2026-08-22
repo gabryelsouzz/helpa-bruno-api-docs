@@ -5,16 +5,18 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/users/me/certificates?page=1&limit=20"
+  url: "{{baseUrl}}/users/me/certificates"
   params:
     - name: page
       value: "1"
       type: query
       description: Current page
+      disabled: true
     - name: limit
       value: "20"
       type: query
       description: Items per page (max. 50)
+      disabled: true
   auth:
     type: bearer
     token: "{{apiKey}}"
@@ -24,6 +26,7 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
 
 examples:
   - name: 200 Paginated list with totalHours
@@ -73,46 +76,3 @@ examples:
             "status": 401,
             "message": "Missing, invalid or expired token."
           }
-
-docs: |-
-  # GET /users/me/certificates — Certificate cards
-
-  Lists the certificates issued to the authenticated user, one card per
-  completed activity, plus the total of certified hours. Powers the
-  **Certificates** section of the Profile screen.
-
-  ## Authentication
-  - Bearer token (JWT) required, sent via `{{apiKey}}`.
-  - The `userId` is extracted exclusively from the token.
-
-  ## Query params
-  | Param | Type | Default | Description |
-  |-------|------|---------|-------------|
-  | page  | int  | 1       | Current page |
-  | limit | int  | 20      | Items per page (max. 50) |
-
-  ## Field mapping (DTO → database)
-  | Field            | Source |
-  |------------------|--------|
-  | `activityTitle`  | `Certificate → Enrollment → Activity.title` |
-  | `workloadHours`  | `Activity → ActivityDetails.workloadHours` |
-  | `activityDate`   | `Activity.startDate` |
-  | `issuedAt`       | `Certificate.issuedAt` (ISO 8601 with time) |
-  | `validationCode` | `Certificate.validationCode` |
-
-  ## Business rules
-  - There is no "status" column on `Certificate`: the record's existence
-    **is** the issuance.
-  - Default ordering: `issuedAt` descending.
-  - Certificates of soft-deleted activities **remain listed** —
-    the certificate is the student's document.
-  - `totalHours` (inside `meta`) = sum of `workloadHours` across **all** of the
-    user's certificates (not just the current page). This is the only route that
-    computes this aggregate — GET /users/me does not return it.
-  - A user without certificates receives `200` with `data: []` and `totalHours: 0`.
-
-  ## Errors
-  | Status | When |
-  |--------|------|
-  | 400    | Invalid `page`/`limit` |
-  | 401    | Missing, invalid or expired token |

@@ -5,20 +5,23 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/users/me/activities?filter=enrolled&page=1&limit=20"
+  url: "{{baseUrl}}/users/me/activities"
   params:
     - name: filter
       value: enrolled
       type: query
       description: enrolled | completed | managed
+      disabled: true
     - name: page
       value: "1"
       type: query
       description: Current page
+      disabled: true
     - name: limit
       value: "20"
       type: query
       description: Items per page (max. 50)
+      disabled: true
   auth:
     type: bearer
     token: "{{apiKey}}"
@@ -28,6 +31,7 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
 
 examples:
   - name: 200 filter=enrolled
@@ -97,52 +101,3 @@ examples:
             "status": 401,
             "message": "Missing, invalid or expired token."
           }
-
-docs: |-
-  # GET /users/me/activities — Enrolled, completed and managed activities
-
-  Lists the activities linked to the authenticated user according to the chosen
-  filter. Powers the **Activities** section of the Profile screen (three tabs).
-
-  ## Authentication
-  - Bearer token (JWT) required, sent via `{{apiKey}}`.
-  - The `userId` is extracted exclusively from the token.
-
-  ## Query params
-  | Param  | Type | Required          | Description |
-  |--------|------|-------------------|-------------|
-  | filter | enum | yes               | `enrolled` \| `completed` \| `managed` |
-  | page   | int  | no (default 1)    | Current page |
-  | limit  | int  | no (default 20)   | Items per page (max. 50) |
-
-  > Note: the English values replace `inscritas`/`concluidas`/`gerenciadas`
-  > from the issue, keeping the API 100% in English. Align with the team and,
-  > if approved, update the issue text.
-
-  ## Filter matrix
-  | filter      | Rule (all with `Activity.deletedAt IS NULL`) |
-  |-------------|----------------------------------------------|
-  | `enrolled`  | `Enrollment.status = APPROVED` for the user AND `Activity.status` in (`OPEN`, `IN_PROGRESS`) |
-  | `completed` | `Enrollment.status = APPROVED` AND `Enrollment.attendanceConfirmed = true` (attendance confirmed by the activity manager) |
-  | `managed`   | `Activity.authorId = userId` (user is the creator) |
-
-  ## Field mapping (DTO → database)
-  | Field           | Source |
-  |-----------------|--------|
-  | `startDate`     | `Activity.startDate` |
-  | `status`        | `Activity.status` (enum `OPEN` \| `IN_PROGRESS` \| `COMPLETED` \| `CANCELLED`) |
-  | `category`      | `Activity.type` (enum `EXTENSION` \| `COURSE` \| `EVENT` \| `LECTURE` \| `OTHER`) |
-  | `workloadHours` | `ActivityDetails.workloadHours` — `null` when the activity has no details |
-  | `location`      | `ActivityDetails → Address` (short string summary) |
-
-  ## Business rules
-  - The user only sees their own history.
-  - `PENDING` or `REJECTED` enrollments never appear in any filter.
-  - Soft-deleted activities (`deletedAt != null`) never appear in any filter.
-  - Default ordering: `startDate` descending.
-
-  ## Errors
-  | Status | When |
-  |--------|------|
-  | 400    | Missing or invalid `filter`; invalid `page`/`limit` |
-  | 401    | Missing, invalid or expired token |
