@@ -8,9 +8,6 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/activities"
-  headers:
-    - name: token
-      value: "{{apiKey}}"
   body:
     type: json
     data: |-
@@ -18,8 +15,8 @@ http:
         "title": "string",
         "type": "EXTENSION",
         "campus": "MACEIO",
-        "startDate": "2026-08-10T16:00:00.000Z",
-        "endDate": "2026-08-10T17:00:00.000Z",
+        "startDate": "2026-08-31T16:00:00.000Z",
+        "endDate": "2026-08-31T17:00:00.000Z",
         "slots": 1,
         "description": "string",
         "area": "string",
@@ -33,17 +30,14 @@ http:
           "state": "AC"
         }
       }
-  auth:
-    type: apikey
-    key: token
-    value: "{{apiKey}}"
-    placement: header
+  auth: inherit
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
 
 examples:
   - name: 201 Response

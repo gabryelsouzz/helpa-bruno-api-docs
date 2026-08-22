@@ -10,15 +10,15 @@ http:
   url: "{{baseUrl}}/activities/:id"
   params:
     - name: id
-      value: 22ac40bd-e160-4c6e-8505-b63913d2482f
+      value: f26559ac-d672-4252-a9a4-d6fe6583d8ec
       type: path
-  auth: inherit
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
 
 examples:
   - name: 200 Response

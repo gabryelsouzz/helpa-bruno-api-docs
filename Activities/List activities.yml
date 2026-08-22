@@ -119,13 +119,13 @@ http:
       type: query
       description: Return only activities ending before this date (ISO 8601). Ignored when `search` is present.
       disabled: true
-  auth: inherit
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
 
 examples:
   - name: 200 Response

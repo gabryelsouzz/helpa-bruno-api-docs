@@ -8,25 +8,18 @@ info:
 http:
   method: DELETE
   url: "{{baseUrl}}/activities/:id"
-  headers:
-    - name: token
-      value: "{{apiKey}}"
   params:
     - name: id
-      value: 22ac40bd-e160-4c6e-8505-b63913d2482f
+      value: f26559ac-d672-4252-a9a4-d6fe6583d8ec
       type: path
       description: Activity UUID
-  auth:
-    type: apikey
-    key: token
-    value: "{{apiKey}}"
-    placement: header
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
 
 examples:
   - name: 204 Response
@@ -153,4 +146,4 @@ examples:
             "message": ""
           }
 
-docs: ⚠️ **Not yet implemented.** Performs a soft delete on the activity by setting `deletedAt`. The record is preserved in the database but excluded from all listings and lookups. Only the author or a manager can delete an activity.
+docs: <br/>

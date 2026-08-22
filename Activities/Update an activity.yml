@@ -8,9 +8,6 @@ info:
 http:
   method: PATCH
   url: "{{baseUrl}}/activities/:id"
-  headers:
-    - name: token
-      value: "{{apiKey}}"
   params:
     - name: id
       value: 22ac40bd-e160-4c6e-8505-b63913d2482f
@@ -32,17 +29,14 @@ http:
           "state": "AL"
         }
       }
-  auth:
-    type: apikey
-    key: token
-    value: "{{apiKey}}"
-    placement: header
+  auth: inherit
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
 
 examples:
   - name: 200 Response
