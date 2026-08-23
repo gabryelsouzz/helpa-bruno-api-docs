@@ -1,5 +1,5 @@
 info:
-  name: Enroll in an activity
+  name: Enroll in an activity (coming soon)
   type: http
   seq: 8
   tags:
@@ -29,10 +29,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -56,11 +56,34 @@ examples:
     request:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
-      headers:
-        - name: token
-          value: ""
       params:
-        - name: activityId
+        - name: id
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 401,
+            "message": "Unauthenticated."
+          }
+  - name: 401 - Unauthenticated (Invalid token)
+    description: Unauthenticated. Token header is missing, invalid or expired.
+    request:
+      url: "{{baseUrl}}/activities/:id/enroll"
+      method: POST
+      headers:
+        - name: Authorization
+          value: Bearer token.invalido.aqui
+      params:
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -83,10 +106,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -109,10 +132,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -135,10 +158,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -161,10 +184,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -187,10 +210,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -213,10 +236,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID

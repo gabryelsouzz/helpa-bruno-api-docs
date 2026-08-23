@@ -5,16 +5,18 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/users/me/certificates?page=1&limit=20"
+  url: "{{baseUrl}}/users/me/certificates"
   params:
     - name: page
       value: "1"
       type: query
       description: Current page
+      disabled: true
     - name: limit
       value: "20"
       type: query
       description: Items per page (max. 50)
+      disabled: true
   auth:
     type: bearer
     token: "{{apiKey}}"
@@ -24,6 +26,7 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
 
 examples:
   - name: 200 Paginated list with totalHours

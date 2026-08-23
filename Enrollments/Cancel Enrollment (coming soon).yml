@@ -1,5 +1,5 @@
 info:
-  name: Cancel Enrollment
+  name: Cancel Enrollment (coming soon)
   type: http
   seq: 9
   tags:
@@ -7,7 +7,7 @@ info:
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/activity/:id/enroll"
+  url: "{{baseUrl}}/activities/:id/enroll"
   params:
     - name: id
       value: f26559ac-d672-4252-a9a4-d6fe6583d8ec
@@ -29,10 +29,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: DELETE
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -51,7 +51,7 @@ examples:
         - name: token
           value: ""
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -74,10 +74,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: DELETE
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -100,10 +100,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: DELETE
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -126,10 +126,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: DELETE
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
@@ -152,10 +152,10 @@ examples:
       url: "{{baseUrl}}/activities/:id/enroll"
       method: DELETE
       headers:
-        - name: token
-          value: "{{apiKey}}"
+        - name: Authorization
+          value: Bearer {{apiKey}}
       params:
-        - name: activityId
+        - name: id
           value: ""
           type: path
           description: Activity UUID
