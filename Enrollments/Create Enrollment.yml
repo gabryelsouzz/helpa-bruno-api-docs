@@ -7,9 +7,9 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/enroll/:activityId"
+  url: "{{baseUrl}}/activities/:id/enroll"
   params:
-    - name: activityId
+    - name: id
       value: f26559ac-d672-4252-a9a4-d6fe6583d8ec
       type: path
       description: Activity UUID
@@ -26,7 +26,7 @@ examples:
   - name: 201 - Successful
     description: Enrollment created successfully. Also returned when a previously canceled enrollment is reactivated.
     request:
-      url: "{{baseUrl}}/enroll/:activityId"
+      url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
         - name: token
@@ -54,7 +54,7 @@ examples:
   - name: 401 - Unauthenticated
     description: Unauthenticated. Token header is missing, invalid or expired.
     request:
-      url: "{{baseUrl}}/enroll/:activityId"
+      url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
         - name: token
@@ -80,7 +80,7 @@ examples:
   - name: "401 - User not found "
     description: Token is valid, but the user it identifies no longer exists or is inactive.
     request:
-      url: "{{baseUrl}}/enroll/:activityId"
+      url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
         - name: token
@@ -106,7 +106,7 @@ examples:
   - name: 404 - Activity not found
     description: Activity not found or soft-deleted.
     request:
-      url: "{{baseUrl}}/enroll/:activityId"
+      url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
         - name: token
@@ -132,7 +132,7 @@ examples:
   - name: 409 - Already enrolled
     description: User already has an active enrollment in this activity.
     request:
-      url: "{{baseUrl}}/enroll/:activityId"
+      url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
         - name: token
@@ -158,7 +158,7 @@ examples:
   - name: 409 - No available slots
     description: Activity has no available slots left (availableSlots = 0).
     request:
-      url: "{{baseUrl}}/enroll/:activityId"
+      url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
         - name: token
@@ -184,7 +184,7 @@ examples:
   - name: 409 - Not open
     description: Activity status is not OPEN.
     request:
-      url: "{{baseUrl}}/enroll/:activityId"
+      url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
         - name: token
@@ -210,7 +210,7 @@ examples:
   - name: 500 - Internal error
     description: Internal server error.
     request:
-      url: "{{baseUrl}}/enroll/:activityId"
+      url: "{{baseUrl}}/activities/:id/enroll"
       method: POST
       headers:
         - name: token
