@@ -51,6 +51,34 @@ examples:
             "userId": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
             "createdAt": "2026-08-22T21:00:00.000Z"
           }
+  - name: 400 - Invalid activity id
+    description: The activity id path param is not a valid UUID.
+    request:
+      url: "{{baseUrl}}/activities/:id/enroll"
+      method: POST
+      headers:
+        - name: Authorization
+          value: Bearer {{apiKey}}
+      params:
+        - name: id
+          value: not-a-uuid
+          type: path
+          description: Activity UUID
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          
+          "status": 400,
+          "message": "",
+          "errors": [
+            { "field": "activityId", "message": "activityId must be a valid UUID." }
+          ]
   - name: 401 - Unauthenticated
     description: Unauthenticated. Token header is missing, invalid or expired.
     request:
