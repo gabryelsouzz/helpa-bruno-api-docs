@@ -28,8 +28,8 @@ settings:
   forwardAuthorizationHeader: true
 
 examples:
-  - name: 201 Response
-    description: Registered successfully.
+  - name: 201 - Register successfully
+    description: Registered successfully. The response body is the created user itself (no envelope, no token) and no Set-Cookie header is sent. To authenticate, use POST /auth/login.
     request:
       url: "{{baseUrl}}/auth/register"
       method: POST
@@ -46,18 +46,15 @@ examples:
         type: json
         data: |-
           {
-            "token": "",
-            "user": {
-              "id": "",
-              "fullName": "",
-              "email": "",
-              "userType": "STUDENT",
-              "isManager": false,
-              "createdAt": "",
-              "updatedAt": ""
-            }
+            "id": "3f8a1c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b",
+            "fullName": "Fulano Master",
+            "email": "user@email.com",
+            "userType": "STUDENT",
+            "isManager": false,
+            "createdAt": "2026-08-26T22:00:00.000Z",
+            "updatedAt": "2026-08-26T22:00:00.000Z"
           }
-  - name: 400 Response
+  - name: 400 - Validation error
     description: Validation error.
     request:
       url: "{{baseUrl}}/auth/register"
@@ -84,7 +81,7 @@ examples:
               }
             ]
           }
-  - name: 409 Response
+  - name: 409 - Email already in use
     description: Email already in use.
     request:
       url: "{{baseUrl}}/auth/register"
@@ -102,10 +99,10 @@ examples:
         type: json
         data: |-
           {
-            "status": 0,
-            "message": ""
+            "status": 409,
+            "message": "Email already in use."
           }
-  - name: 500 Response
+  - name: 500 - Internal error
     description: Internal server error.
     request:
       url: "{{baseUrl}}/auth/register"
@@ -123,6 +120,6 @@ examples:
         type: json
         data: |-
           {
-            "status": 0,
-            "message": ""
+            "status": 500,
+            "message": "Internal server error."
           }
