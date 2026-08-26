@@ -1,0 +1,214 @@
+info:
+  name: List Activity Enrollments (coming soon)
+  type: http
+  seq: 10
+  tags:
+    - Enroll
+
+http:
+  method: GET
+  url: "{{baseUrl}}/activities/:id/enroll"
+  params:
+    - name: id
+      value: f26559ac-d672-4252-a9a4-d6fe6583d8ec
+      type: path
+      description: Activity UUID
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+examples:
+  - name: 200 - Successful
+    description: Returns the list of active (APPROVED) enrollments with contact data, ordered by enrolledAt ascending (oldest first), plus the slot summary. Available to the activity creator or to a manager (isManager) — both receive exactly the same result. CANCELLED enrollments are hidden and do not count in totalEnrolled.
+    request:
+      url: "{{baseUrl}}/activities/:id/enroll"
+      method: GET
+      headers:
+        - name: Authorization
+          value: Bearer {{apiKey}}
+      params:
+        - name: id
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "enrollments": [
+              {
+                "fullName": "Maria Clara Santos",
+                "email": "maria.santos@aluno.ufal.br",
+                "status": "APPROVED",
+                "enrolledAt": "2026-08-20T14:32:10.000Z"
+              },
+              {
+                "fullName": "João Pedro Ferreira",
+                "email": "joao.ferreira@aluno.ufal.br",
+                "status": "APPROVED",
+                "enrolledAt": "2026-08-22T21:00:00.000Z"
+              }
+            ],
+            "totalEnrolled": 2,
+            "availableSlots": 8
+          }
+
+  - name: 200 - Empty list
+    description: Activity has no active enrollments. Returns 200 with an empty list and the slot summary intact — never 404 for lack of enrollees.
+    request:
+      url: "{{baseUrl}}/activities/:id/enroll"
+      method: GET
+      headers:
+        - name: Authorization
+          value: Bearer {{apiKey}}
+      params:
+        - name: id
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "enrollments": [],
+            "totalEnrolled": 0,
+            "availableSlots": 10
+          }
+
+  - name: 401 - Unauthenticated
+    description: Unauthenticated. Token header is missing, invalid or expired — or the user it identifies no longer exists in the database. Checked before activity existence, so not even the existence of the activity is revealed.
+    request:
+      url: "{{baseUrl}}/activities/:id/enroll"
+      method: GET
+      params:
+        - name: id
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 401,
+            "message": "Unauthenticated."
+          }
+
+  - name: 403 - Forbidden
+    description: Authenticated user is neither the activity creator nor a manager (isManager). Volunteers enrolled in the activity also receive 403. No enrollee data is exposed. Checked only after the activity is known to exist (404 takes precedence).
+    request:
+      url: "{{baseUrl}}/activities/:id/enroll"
+      method: GET
+      headers:
+        - name: Authorization
+          value: Bearer {{apiKey}}
+      params:
+        - name: id
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 403
+      statusText: Forbidden
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 403,
+            "message": "Only the activity creator or a manager can view the enrollment list."
+          }
+
+  - name: 404 - Activity not found
+    description: Activity not found or soft-deleted. Per US 2.8, a non-UUID id also returns 404 (not 400), preserving the validation order authentication (401) → existence (404) → authorization (403).
+    request:
+      url: "{{baseUrl}}/activities/:id/enroll"
+      method: GET
+      headers:
+        - name: Authorization
+          value: Bearer {{apiKey}}
+      params:
+        - name: id
+          value: not-a-uuid
+          type: path
+          description: Activity UUID
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 404,
+            "message": "Activity not found."
+          }
+
+  - name: 500 - Internal error
+    description: Internal server error.
+    request:
+      url: "{{baseUrl}}/activities/:id/enroll"
+      method: GET
+      headers:
+        - name: Authorization
+          value: Bearer {{apiKey}}
+      params:
+        - name: id
+          value: ""
+          type: path
+          description: Activity UUID
+    response:
+      status: 500
+      statusText: Internal Server Error
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "status": 500,
+            "message": "Internal server error."
+          }
+
+docs: |-
+  Lists the active enrollments of an activity for its creator or a manager.
+
+  - Enrollment is a top-level entity with a dedicated route: /enroll. The activity is identified by the activityId path param.
+  - No request body and no query params: the user is resolved exclusively from the JWT token (never from params, query or body).
+  - The token must be valid AND the user it identifies must still exist in the database (light hybrid authentication).
+  - Validation order: authentication (401) → activity existence (404) → authorization (403), so the existence of an activity is never leaked to unauthorized users.
+  - Authorization: only the activity creator (Activity.authorId === token user) OR a manager (user.isManager). Any other authenticated user — including volunteers enrolled in the activity — receives 403 with no data.
+  - Only active enrollments (APPROVED) are listed; CANCELLED enrollments are hidden and do not count in totalEnrolled. PENDING is out of the MVP scope.
+  - Data minimization: each enrollee exposes only fullName, email, status and enrolledAt — never passwordHash or internal database fields.
+  - The list is ordered by enrolledAt ascending (oldest enrollment first).
+  - The envelope carries the slot summary: totalEnrolled (active enrollments) and availableSlots (activity.slots - totalEnrolled), consistent with POST /activities/:id/enroll.
+  - Success is always 200, even with zero active enrollments (empty list) — never 404 for lack of enrollees.
+  - A nonexistent, soft-deleted or non-UUID activity id returns 404.
+  - No pagination or status filters in the MVP; those are additive evolutions that do not break this contract.
