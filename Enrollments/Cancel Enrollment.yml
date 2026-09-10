@@ -1,5 +1,5 @@
 info:
-  name: Cancel Enrollment (coming soon)
+  name: Cancel Enrollment
   type: http
   seq: 9
   tags:
@@ -42,7 +42,6 @@ examples:
       body:
         type: text
         data: ""
-
   - name: 401 - Unauthenticated
     description: Unauthenticated. Token header is missing, invalid or expired.
     request:
@@ -66,7 +65,6 @@ examples:
             "status": 401,
             "message": "Unauthenticated."
           }
-
   - name: 401 - User not found
     description: Token is valid, but the user it identifies no longer exists or is inactive.
     request:
@@ -93,7 +91,6 @@ examples:
             "status": 401,
             "message": "User account not found or inactive."
           }
-
   - name: 404 - Enrollment not found
     description: No active enrollment for the authenticated user in this activity. Also returned when the enrollment was already canceled or belongs to another user — without revealing other users' enrollments.
     request:
@@ -120,7 +117,6 @@ examples:
             "status": 404,
             "message": "Enrollment not found."
           }
-
   - name: 404 - Activity not found
     description: Activity not found, soft-deleted, or id is not a valid UUID.
     request:
@@ -147,7 +143,6 @@ examples:
             "status": 404,
             "message": "Activity not found."
           }
-
   - name: 409 - Not open
     description: Activity status is not OPEN. Cancellation is only allowed while the activity is OPEN (mirrors the enrollment rule). IN_PROGRESS, COMPLETED and CANCELLED activities return 409. This also makes homologated attendance and hours (US 2.8.1) unreachable by cancellation, since homologation only exists on COMPLETED activities.
     request:
@@ -174,7 +169,6 @@ examples:
             "status": 409,
             "message": "Activity is not open for cancellation."
           }
-
   - name: 500 - Internal error
     description: Internal server error.
     request:

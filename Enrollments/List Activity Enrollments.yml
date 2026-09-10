@@ -1,5 +1,5 @@
 info:
-  name: List Activity Enrollments (coming soon)
+  name: List Activity Enrollments
   type: http
   seq: 10
   tags:
@@ -99,7 +99,6 @@ examples:
             "limit": 10,
             "totalPresent": 1
           }
-
   - name: 200 - Empty list
     description: Activity has no active enrollments. Returns 200 with an empty list — never 404 for lack of enrollees.
     request:
@@ -129,7 +128,6 @@ examples:
             "limit": 10,
             "totalPresent": 0
           }
-
   - name: 400 - Invalid query params
     description: page or limit is not a positive integer.
     request:
@@ -163,7 +161,6 @@ examples:
               { "field": "page", "message": "page must be a positive integer." }
             ]
           }
-
   - name: 401 - Unauthenticated
     description: Unauthenticated. Token header is missing, invalid or expired — or the user it identifies no longer exists in the database. Checked before activity existence, so not even the existence of the activity is revealed.
     request:
@@ -187,7 +184,6 @@ examples:
             "status": 401,
             "message": "Unauthenticated."
           }
-
   - name: 403 - Forbidden
     description: Authenticated user is neither the activity creator nor a manager (isManager). Volunteers enrolled in the activity also receive 403. No enrollee data is exposed. Checked only after the activity is known to exist (404 takes precedence).
     request:
@@ -214,7 +210,6 @@ examples:
             "status": 403,
             "message": "Only the activity creator or a manager can view the enrollment list."
           }
-
   - name: 404 - Activity not found
     description: Activity not found or soft-deleted. A non-UUID id also returns 404 (not 400), preserving the validation order authentication (401) → existence (404) → authorization (403), aligned with DELETE /activities/:id/enroll.
     request:
@@ -241,7 +236,6 @@ examples:
             "status": 404,
             "message": "Activity not found."
           }
-
   - name: 500 - Internal error
     description: Internal server error.
     request:
