@@ -70,22 +70,7 @@ examples:
             "endDate": "2026-08-15T12:00:00.000Z",
             "slots": 40,
             "availableSlots": 40,
-            "status": "OPEN",
-            "details": {
-              "description": "Introdução à lógica de programação para iniciantes.",
-              "area": "Tecnologia",
-              "format": "IN_PERSON",
-              "url": null,
-              "workloadHours": 20,
-              "address": {
-                "id": "a1b2c3d4-0000-4000-8000-000000000002",
-                "addressLine": "Av. Manoel Severino Barbosa, s/n",
-                "district": "Bom Sucesso",
-                "zipCode": "57309005",
-                "city": "Arapiraca",
-                "state": "AL"
-              }
-            }
+            "status": "OPEN"
           }
   - name: 400 Response
     description: Validation error.
